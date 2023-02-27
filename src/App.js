@@ -15,9 +15,11 @@ export default function App() {
   const [erros, setErros] = useState(0)
   const [palavraEscolhida, setPalavraEscolhida] = useState([])
   const [palavraJogo, setPalavraJogo] = useState([])
+  const [letrasUsadas, setLetrasUsadas] = useState(alfabeto)
 
   function iniciarJogo() {
     setErros(0)
+    setLetrasUsadas([])
     sortearPalavra()
   }
 
@@ -34,17 +36,46 @@ export default function App() {
     setPalavraJogo(tracinhos)
   }
 
+  function clicarLetra(letra) {
+    setLetrasUsadas([...letrasUsadas, letra])
+
+    if (palavraEscolhida.includes(letra)) {
+      acertouLetra(letra)
+    } else {
+      errouLetra(letra)
+    }
+
+  }
+
+  function acertouLetra(letra) {
+    console.log("acertou")
+  }
+
+  function errouLetra(letra) {
+    const novosErros = erros + 1
+    setErros(novosErros)
+  }
+
   return (
     <div className="container-tela">
 
       <div className="container-forca">
-        <img src={imagens[erros]} alt="forca" data-test="game-image"/>
+        <img src={imagens[erros]} alt="forca" data-test="game-image" />
         <button onClick={iniciarJogo} data-test="choose-word">Escolher Palavra</button>
         <h1 data-test="word">{palavraJogo}</h1>
       </div>
 
       <div className="container-letras">
-        {alfabeto.map((letra) => <button key={letra} disabled={true} data-test="letter">{letra}</button>)}
+        {alfabeto.map((letra) => (
+          <button
+            key={letra}
+            disabled={letrasUsadas.includes(letra)}
+            data-test="letter"
+            onClick={() => clicarLetra(letra)}
+          >
+            {letra}
+          </button>
+        ))}
       </div>
 
     </div>
