@@ -16,11 +16,18 @@ export default function App() {
   const [palavraEscolhida, setPalavraEscolhida] = useState([])
   const [palavraJogo, setPalavraJogo] = useState([])
   const [letrasUsadas, setLetrasUsadas] = useState(alfabeto)
+  const [corPalavra, setCorPalavra] = useState("preto")
 
   function iniciarJogo() {
     setErros(0)
     setLetrasUsadas([])
+    setCorPalavra("preto")
     sortearPalavra()
+  }
+
+  function finalizarJogo() {
+    setPalavraJogo(palavraEscolhida)
+    setLetrasUsadas(alfabeto)
   }
 
   function sortearPalavra() {
@@ -48,12 +55,32 @@ export default function App() {
   }
 
   function acertouLetra(letra) {
-    console.log("acertou")
+    const novaPalavraJogo = [...palavraJogo]
+
+    palavraEscolhida.forEach((l, i) => {
+      if (l === letra) {
+        novaPalavraJogo[i] = letra
+      }
+    })
+
+    setPalavraJogo(novaPalavraJogo)
+
+    // ganhou?
+    if (!novaPalavraJogo.includes(" _")) {
+      setCorPalavra("verde")
+      finalizarJogo()
+    }
   }
 
   function errouLetra(letra) {
     const novosErros = erros + 1
     setErros(novosErros)
+
+    // perdeu?
+    if (novosErros === 6) {
+      setCorPalavra("vermelho")
+      finalizarJogo()
+    }
   }
 
   return (
@@ -62,7 +89,7 @@ export default function App() {
       <div className="container-forca">
         <img src={imagens[erros]} alt="forca" data-test="game-image" />
         <button onClick={iniciarJogo} data-test="choose-word">Escolher Palavra</button>
-        <h1 data-test="word">{palavraJogo}</h1>
+        <h1 className={corPalavra} data-test="word">{palavraJogo}</h1>
       </div>
 
       <div className="container-letras">
